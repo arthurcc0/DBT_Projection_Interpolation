@@ -1,7 +1,10 @@
 """
 Created on Fri Sep 17 10:10:37 2021
 
-@author: ArthurC adapted to use different UNet modules
+@author: ArthurC 
+
+Adapted to use different UNet modules. Also contains the VGG16 network PL loss class
+
 """
 
 import torch 
@@ -37,11 +40,6 @@ class Net(nn.Module):
         self.Flow_L = UNet(2,4,level+1,kernel_sz = kernel_sz) # Modified from: Unet(6,4,5) to fit 1ch images
         self.refine_flow = UNet(6,4,level,wf=wf,kernel_sz = kernel_sz) # Modified from: Unet(10,4,4) to fit 1ch images
         self.final = UNet(3,1,level,wf=wf,kernel_sz = kernel_sz) # Modified from: Unet(9,1,4) to fit 1ch images and to output 1ch
-        
-        # self.Mask = MultiResUNet(8,2,level,wf=wf) # Modified from: Unet(16,2,4) to fit 1ch images
-        # self.Flow_L = MultiResUNet(2,4,level+1,wf=wf) # Modified from: Unet(6,4,5) to fit 1ch images
-        # self.refine_flow = MultiResUNet(6,4,level,wf=wf) # Modified from: Unet(10,4,4) to fit 1ch images
-        # self.final = MultiResUNet(3,1,level,wf=wf) # Modified from: Unet(9,1,4) to fit 1ch images and to output 1ch
 
     def process(self,x0,x1,t=0.5):
 
@@ -118,14 +116,16 @@ class Gen(nn.Module):
     def __init__(self, wf=4):
         """
         Args:
-          num_filters: Number of filter in the covolution
+          wf: Factor to multiply the number of filters in the covolution
         """
         super(Gen, self).__init__()
         
         self.generator = Net(wf=4)
 
     def forward(self, x0, x1, t=0.5):
-
+        """
+          t: Value inside the interval [0,1] that represents the placement between the two input images where the interpolated image should be synthesized 
+        """
         return self.generator(x0, x1, t)
     
 class Vgg16(nn.Module):
