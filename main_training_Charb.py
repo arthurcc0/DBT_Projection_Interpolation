@@ -1,7 +1,7 @@
 """
 Created on Fri Sep 17 10:10:37 2021
 
-@author: Rodrigo
+@author: Arthur
 """
 
 import matplotlib.pyplot as plt
@@ -38,9 +38,6 @@ def train(generator, vgg, gOptimizer, epoch, train_loader, device, summarywriter
             
         # Generate a batch of new images
         gen_data = generator(img_1,img_3)       # t=0.5
-        
-        # L1 loss
-        # loss_L1 = torch.mean(torch.abs(gen_data - target))
         
         # Charbonnier loss
         eps = 1e-6
@@ -114,7 +111,7 @@ if __name__ == '__main__':
     # flag to set the use of the tuning parameter incorporated in the network
     useTuningP = False
 
-    path_data = '/home/laviusp/Documents/Arthur/'
+    path_data = './images' # Path to the input image data
     path_models = "final_models/mod_{}/{}_Charb{}/".format(partition,dts,useTuningP*"_wAngle")
     path_logs = "final_logs/mod_{}/{}/{}".format(partition,dts,time.strftime("%Y-%m-%d-%H%M%S", time.localtime()))
     
