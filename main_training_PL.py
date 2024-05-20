@@ -40,10 +40,6 @@ def train(generator, vgg, gOptimizer, epoch, train_loader, device, summarywriter
         # Generate a batch of new images
         gen_data = generator(img_1,img_3,pos = target_angle)    # t=0.5   
         
-        # PL
-        # features_y = vgg(gen_data)
-        # features_x = vgg(target)
-        
         # pl4_loss = torch.mean((features_y.relu4_3 - features_x.relu4_3)**2)
         pl4_loss = vgg(target,gen_data)
         loss = pl4_loss 
@@ -99,10 +95,8 @@ if __name__ == '__main__':
     # partition = args['mod']
     # dts = args['dts']
     # normalization =  args['norm']
-    
      
     # Args declaration for debugging
-    # partition = 'clinical_DBT'
     partition = 'train_ClinicalHologic'
     dts = 9906
     normalization = 'scale'
@@ -118,7 +112,7 @@ if __name__ == '__main__':
     # flag to set the use of the tuning parameter incorporated in the network
     useTuningP = False
     
-    path_data = '/home/laviusp/Documents/Arthur/'
+    path_data = './images' # Path to the input image data
     path_models = "final_models/mod_{}/{}_PL4{}/".format(partition,dts,useTuningP*"_wAngle")
     path_logs = "final_logs/mod_{}/{}/{}".format(partition,dts,time.strftime("%Y-%m-%d-%H%M%S", time.localtime()))
     
@@ -130,13 +124,7 @@ if __name__ == '__main__':
                                                                                                                                 angular_range,
                                                                                                                                 num_proj,
                                                                                                                                 useTuningP*'_wAngle')
-    path_final_critic = path_models + "critic_DBT_PVInterpolation-{}Triplets_{}_NormType-{}{}_3ch_{}deg{}projs{}.pth".format(cropped_dim,
-                                                                                                                              machine,
-                                                                                                                              normalization,
-                                                                                                                              applyFlatFielding*'_wFlatFieldingCorrection',
-                                                                                                                              angular_range,
-                                                                                                                              num_proj,
-                                                                                                                              useTuningP*'_wAngle')
+    path_final_critic = paht_final_generator
     
     LR = 1e-5
     batch_size = 1
@@ -236,6 +224,4 @@ if __name__ == '__main__':
       
       # if (epoch + 1) % 5 == 0:
           # Testing code
-          # os.system("python main_testing.py --mod {} --dts {} --loss PL4 --norm {} --crop True".format(partition, dts, normalization))
-
-                       
+          # os.system("python main_testing.py --mod {} --dts {} --loss PL4 --norm {} --crop True".format(partition, dts, normalization))                  
