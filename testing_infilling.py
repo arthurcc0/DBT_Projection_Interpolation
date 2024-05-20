@@ -15,13 +15,12 @@ import torch
 import pydicom
 import os
 import argparse
-import pathlib
 import copy
 
 from tqdm import tqdm
 
 # Own codes
-from libs.models import Gen
+from libs.models import Gen, Net_t
 from libs.utilities import load_model, makedir
 from libs.dataset import scale, de_scale, zscore, de_zscore
 from skimage.filters import threshold_otsu
@@ -86,7 +85,6 @@ def model_forward(model, img_1, img_3, maxV, normalization, angle = 0, useTuning
     interp_img_2 = np.empty_like(img_1)
     
     # Forward through the model
-    # Forward through the model
     with torch.no_grad():
         if useTuningP:
             interp_img = model(torch.from_numpy(img_1).unsqueeze(0).unsqueeze(0).to(device),
@@ -129,6 +127,7 @@ def correct_intensity(img, img1, img3, maxV):
     maskBreast = img > threshold_otsu(img) 
     mean_img1 = img1[img1 > threshold_otsu(img1)].mean()
     mean_img2 = img3[img3 > threshold_otsu(img3)].mean()
+
     factor_b = img[~maskBreast].mean() # Brightness factor. In this case, equal to the offset in the bg.
     c_img = img - factor_b
     factor_c = c_img[maskBreast].mean()/np.mean([mean_img1,mean_img2]) # Contrast factor
@@ -138,7 +137,7 @@ def correct_intensity(img, img1, img3, maxV):
     
     return c_img
 
-def test(model, path_data, path2write, partition, subset, machine, crop_flag, cropped_dim, correct_intensity_flag, typ, epoch, nPv, angR, maxV, normalization, useTuningP=False, applyFlatFielding=False, props=None):
+def test(model, path_data, path2write, partition, subset, machine, crop_flag, cropped_dim, correct_intensity_flag, loss, epoch, nPv, angR, maxV, normalization, useTuningP=False, applyFlatFielding=False, props=None):
         
     test_exams_path = os.listdir(os.path.join(path_data,subset))
     
@@ -246,6 +245,7 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
                 dcmH3.Rows, dcmH3.Columns = cropped_dim
    
             # Write dicom files
+
             dcmH1.save_as(os.path.join(folder_name,"_{:0>2}.dcm".format(str(2*i))))
             # print("Saving {:0>2} as the first real image in sequence".format(str(2*i)))
               
@@ -261,19 +261,20 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
             # print("Saving {:0>2} as the second interpolated image".format(str(2*i+3)))
             
             dcmH3.save_as(os.path.join(folder_name,"_{:0>2}.dcm".format(str(2*i+4))))
+        
     return
 
 #%%
 
 if __name__ == '__main__':
     
-    # ap = argparse.ArgumentParser(description='Generate interpolated DBT projection')
+    # ap = argparse.ArgumentParser(description='Generate interpolated DBT projections')
     # ap.add_argument("--mod", type=str, required=True, 
-    #                 help="Image set from: (train_VCT, clinical_DBTMI, clinical_DBT)")
+    #                 help="Image set from: (train_VCT, 'train_ClinicalHologic')")
     # ap.add_argument("--dts", type=int, required=True, 
     #                 help="Dataset size")
-    # ap.add_argument("--typ", type=str, required=True, 
-    #                 help="Loss type")
+    # ap.add_argument("--loss", type=str, required=True, 
+    #                 help="Loss type from: (Charb, PL4))
     # ap.add_argument("--norm", type=str, required=True, 
     #                 help="scale: normalize with vmin and vmax; zscore: standardize with mean and std")    
     # # ap.add_argument("--crop", type=bool, required=True,
@@ -284,16 +285,17 @@ if __name__ == '__main__':
     
     # partition = args['mod']
     # dts = args['dts']
-    # typ = args['typ']
+    # loss = args['loss']
     # normalization =  args['norm']
     # crop = args['crop']           
     
-    # Args declaration for debugging
+    # Args declaration for debugging        
+
     machine = 'Hologic'
     partition = 'train_ClinicalHologic'
     dts = 9906
-    typ = 'PL4'
-    # typ = 'Charb'
+    loss = 'PL4'
+    # loss = 'Charb'
     normalization = 'scale' #'zscore' # or 'scale'
     crop = True
     map_intensity = True
@@ -310,11 +312,9 @@ if __name__ == '__main__':
     # maxV = 4095.
     # prop = np.load('tools/{}_dataset_prop_{}.npy'.format(partition,applyFlatFielding*'wFlatFieldingCorrection'),allow_pickle=True).item()
     # maxV = prop['max']
-    
-    # subset = 'misc_test'
+
     path_data = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Inrad_Processed//'
-    # subset = 'clinical_DBTMI_test'
-    # subset = 'test_VCT'
+    # subset defines the folder to read the exams from. Projections will be generated for those DBTs
     subset = 'test'
     path_models = "final_models/mod_{}/{}_{}{}/".format(partition,dts,typ,useTuningP*"_wAngle")
     path2write = "outputs"
@@ -335,8 +335,11 @@ if __name__ == '__main__':
     # Test if there is a GPU
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     
-    # Create modelsL4
-    generator = Gen()
+    # Create models
+    if useTuningP:
+        generator = Gen()
+    else:
+        generator = Net_t(input_sz=cropped_dim)
     
     # Send it to device (GPU if exist)
     generator = generator.to(device)
@@ -356,7 +359,7 @@ if __name__ == '__main__':
          crop_flag = crop,
          correct_intensity_flag = map_intensity,
          cropped_dim = new_dim, 
-         typ = typ, 
+         loss = loss, 
          epoch = epoch, 
          nPv = num_proj,
          angR = angular_range,
