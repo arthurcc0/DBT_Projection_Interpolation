@@ -123,8 +123,7 @@ def correct_intensity(img, img1, img3, maxV):
 def test(model, path_data, path2write, partition, subset, machine, crop_flag, cropped_dim, correct_intensity_flag, loss, epoch, nPv, angR, maxV, normalization, useTuningP=False, applyFlatFielding=False, props=None):
     
     test_exams_path = os.listdir(os.path.join(path_data,subset))
-    
-    applyFlatFielding = False
+
     applyMeanFactor = False
     step = 0
     if applyFlatFielding: 
@@ -243,14 +242,13 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
             pydicom.dcmwrite(os.path.join(folder_name,"_{:0>2}.dcm".format(str(i+2))),
                              dcmH3, 
                              write_like_original=True)     
-
     return
 
 #%%
 
 if __name__ == '__main__':
     
-    # ap = argparse.ArgumentParser(description='Generate interpolated DBT projections')
+    # ap = argparse.ArgumentParser(description='Generate interpolated DBT projections replacing the interspaced projections in the sequence')
     # ap.add_argument("--mod", type=str, required=True, 
     #                 help="Image set from: (train_VCT, 'train_ClinicalHologic')")
     # ap.add_argument("--dts", type=int, required=True, 
