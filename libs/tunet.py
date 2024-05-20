@@ -23,7 +23,7 @@ class tUNet(nn.Module):
         depth=5,
         wf=4,
         kernel_sz=3,
-        input_size=(1536,608),
+        input_size=(1536,608), # This sample size was set based on the GPU memory of the GEFORCE GTX TITAN X
         up_mode='upsample'
     ):
         super(tUNet, self).__init__()
