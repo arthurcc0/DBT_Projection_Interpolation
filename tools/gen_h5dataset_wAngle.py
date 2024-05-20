@@ -17,7 +17,6 @@ from pathlib import Path
 from skimage.filters import threshold_otsu
 import matplotlib.pyplot as plt
 
-
 #%%
 
 def process_each_folder(folder_name, step, num_proj=25, angular_range = 50,  cropped_dim = (1664, 608)):
@@ -77,25 +76,14 @@ def process_each_folder(folder_name, step, num_proj=25, angular_range = 50,  cro
         # ATTENTION - Make sure that the images are not all fliped to the right side, different equipment has different protocol
         # Hologic: Images are always on the right side. Siemens: Left breasts are displayed at the left side
         if view == 'CC':
-            # if laterality == 'R':
             img_1 = img_1[margin:cropped_dim[0]+margin,-cropped_dim[1]:]
             img_2 = img_2[margin:cropped_dim[0]+margin,-cropped_dim[1]:]
             img_3 = img_3[margin:cropped_dim[0]+margin,-cropped_dim[1]:]
-            # else: 
-            #     img_1 = img_1[margin:cropped_dim[0]+margin,:cropped_dim[1]]
-            #     img_2 = img_2[margin:cropped_dim[0]+margin,:cropped_dim[1]]
-            #     img_3 = img_3[margin:cropped_dim[0]+margin,:cropped_dim[1]]
-        elif laterality == 'R': # Giving a step to avoid part of the image without flat-fielding calibration
-            # img_1 = img_1[step:cropped_dim[0]+step,-cropped_dim[1]:]
-            # img_2 = img_2[step:cropped_dim[0]+step,-cropped_dim[1]:]
-            # img_3 = img_3[step:cropped_dim[0]+step,-cropped_dim[1]:]
+        elif laterality == 'R':
             img_1 = img_1[:cropped_dim[0],-cropped_dim[1]:]
             img_2 = img_2[:cropped_dim[0],-cropped_dim[1]:]
             img_3 = img_3[:cropped_dim[0],-cropped_dim[1]:]
         else:
-            # img_1 = img_1[step:cropped_dim[0]+step,:cropped_dim[1]]
-            # img_2 = img_2[step:cropped_dim[0]+step,:cropped_dim[1]]
-            # img_3 = img_3[step:cropped_dim[0]+step,:cropped_dim[1]] 
             img_1 = img_1[-cropped_dim[0]:,-cropped_dim[1]:]
             img_2 = img_2[-cropped_dim[0]:,-cropped_dim[1]:]
             img_3 = img_3[-cropped_dim[0]:,-cropped_dim[1]:] 
@@ -112,11 +100,8 @@ def process_each_folder(folder_name, step, num_proj=25, angular_range = 50,  cro
 
 if __name__ == '__main__':
     
-    # path2read = '/home/laviusp/Documents/Arthur/data/'
-    # path2read = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Lund_Images/'
-    # path2read = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/VCT_Phantoms_Siemens/'
-    path2read = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Inrad_Processed'
-    path2write = '/home/laviusp/Documents/Arthur/'
+    path2read = '/' # Path where to retrieve the input images
+    path2write = '/' # Path to save the .h5 file
     
     # Flag to display images while creating the h5 file
     displayImgs = True
@@ -124,12 +109,9 @@ if __name__ == '__main__':
     # Flag to apply or not the mean factor to balance the mean value along the projections
     applyMeanFactor = False
 
-    step = 0
-
-    # partition = 'clinical_DBTMI'
-    # partition = 'doubledD_train_VCT'
-    partition = 'train'
+    step = 0 # Step value to disconsider part of the edges of the projections to perform cropping of intensity correction
     
+    partition = 'train'
     folder_names = [str(item) for item in Path(path2read).joinpath(partition).glob("*") if Path(item).is_dir()] #.glob if any specific folder is prefered
     
     random.shuffle(folder_names)
