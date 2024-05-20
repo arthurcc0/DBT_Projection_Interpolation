@@ -1,7 +1,7 @@
 """
 Created on Fri Sep 17 10:10:37 2021
 
-@author: Arthur
+@author: ArthurC
 
 Load the projection sequences of a folder of exams and save as triplets in a h5 file
 """
@@ -18,9 +18,6 @@ import matplotlib.pyplot as plt
 
 #%%
 
-# def process_each_folder(folder_name, calibration_map, mean_factor, step, num_proj=25, 
-#                         cropped_dim = (1664, 608), applyFlatFielding = False, 
-#                         applyMeanFactor = False):
 def process_each_folder(folder_name, step, num_proj=25,  cropped_dim = (1664, 608)):
     '''Process DBT folder to extract triplets'''
     
@@ -60,24 +57,6 @@ def process_each_folder(folder_name, step, num_proj=25,  cropped_dim = (1664, 60
             view = 'CC'
             img_1_header.ViewPosition = view
         
-        # if applyFlatFielding:
-        #     if view != 'CC':
-        #         calibration_map = np.flipud(calibration_map)
-        #     elif laterality != 'L':
-        #         calibration_map = np.fliplr(calibration_map)
-                
-        #     if applyMeanFactor:
-        #         img_1[step:-step,:] = img_1[step:-step,:]/calibration_map[i,:,:]
-        #         img_1 = (img_1/mean_factor[i]).astype('uint16')
-        #         img_2[step:-step,:] = img_2[step:-step,:]/calibration_map[i+1,:,:]
-        #         img_2 = (img_2/mean_factor[i+1]).astype('uint16')
-        #         img_3[step:-step,:] = img_3[step:-step,:]/calibration_map[i+2,:,:]
-        #         img_3 = (img_3/mean_factor[i+2]).astype('uint16')
-        #     else:
-        #         img_1[step:-step,:] = (img_1[step:-step,:]/calibration_map[i,:,:]).astype('uint16')
-        #         img_2[step:-step,:] = (img_2[step:-step,:]/calibration_map[i+1,:,:]).astype('uint16')
-        #         img_3[step:-step,:] = (img_3[step:-step,:]/calibration_map[i+2,:,:]).astype('uint16')
-        
         # # Downsample by 2
         # img_1 = img_1[::2,::2]
         # img_2 = img_2[::2,::2]
@@ -101,17 +80,12 @@ def process_each_folder(folder_name, step, num_proj=25,  cropped_dim = (1664, 60
             #     img_1 = img_1[margin:cropped_dim[0]+margin,:cropped_dim[1]]
             #     img_2 = img_2[margin:cropped_dim[0]+margin,:cropped_dim[1]]
             #     img_3 = img_3[margin:cropped_dim[0]+margin,:cropped_dim[1]]
-        elif laterality == 'R': # Giving a step to avoid part of the image without flat-fielding calibration
-            # img_1 = img_1[step:cropped_dim[0]+step,-cropped_dim[1]:]
-            # img_2 = img_2[step:cropped_dim[0]+step,-cropped_dim[1]:]
-            # img_3 = img_3[step:cropped_dim[0]+step,-cropped_dim[1]:]
+        elif laterality == 'R': 
             img_1 = img_1[:cropped_dim[0],-cropped_dim[1]:]
             img_2 = img_2[:cropped_dim[0],-cropped_dim[1]:]
             img_3 = img_3[:cropped_dim[0],-cropped_dim[1]:]
         else:
-            # img_1 = img_1[step:cropped_dim[0]+step,:cropped_dim[1]]
-            # img_2 = img_2[step:cropped_dim[0]+step,:cropped_dim[1]]
-            # img_3 = img_3[step:cropped_dim[0]+step,:cropped_dim[1]] 
+
             img_1 = img_1[-cropped_dim[0]:,-cropped_dim[1]:]
             img_2 = img_2[-cropped_dim[0]:,-cropped_dim[1]:]
             img_3 = img_3[-cropped_dim[0]:,-cropped_dim[1]:] 
@@ -128,11 +102,8 @@ def process_each_folder(folder_name, step, num_proj=25,  cropped_dim = (1664, 60
 
 if __name__ == '__main__':
     
-    # path2read = '/home/laviusp/Documents/Arthur/data/'
-    # path2read = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Lund_Images/'
-    # path2read = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/VCT_Phantoms_Siemens/'
-    path2read = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Inrad_Processed'
-    path2write = '/home/laviusp/Documents/Arthur/'
+    path2read = '/images'  # Path of the input folder containing the images
+    path2write = '/' # Path where to save the images
     
     # Flag to display images while creating the h5 file
     displayImgs = True
@@ -144,14 +115,11 @@ if __name__ == '__main__':
     # calibration_map = np.load(os.path.join(path2read,'SiemensProjCalibrationMap_{}_step_{}.npy'.format('L',step)))
     # mean_factor = np.load(os.path.join(path2read,'SiemensProjMeanFactor.npy'))
     
-    # partition = 'clinical_DBTMI'
-    # partition = 'doubledD_train_VCT'
     partition = 'train'
     
     folder_names = [str(item) for item in Path(path2read).joinpath(partition).glob("*") if Path(item).is_dir()] #.glob if any specific folder is prefered
     
     random.shuffle(folder_names)
-    
     np.random.seed(0)
     
     machine = 'Hologic'
