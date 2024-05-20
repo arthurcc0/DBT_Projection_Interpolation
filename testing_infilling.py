@@ -124,21 +124,11 @@ def model_forward(model, img_1, img_3, maxV, normalization, angle = 0, useTuning
     return interp_img_1, interp_img_2
 
 def correct_intensity(img, img1, img3, maxV):
-# def correct_intensity(img, gt, step):
-    
-    # Using polyfit with the GT image (trick)
-    # maskBreast = gt < threshold_otsu(gt[step:-step]) 
-    # myInv = lambda x : np.array((1./x[0],-x[1]/x[0]))
-    # c_img = np.polyval(myInv(np.polyfit(gt[maskBreast].flatten(),img[maskBreast].flatten(),deg=1)),img)
-    # c_img[~maskBreast] = gt[~maskBreast]
     
     # Processed images
     maskBreast = img > threshold_otsu(img) 
     mean_img1 = img1[img1 > threshold_otsu(img1)].mean()
     mean_img2 = img3[img3 > threshold_otsu(img3)].mean()
-    # mean_img = img[maskBreast].mean()
-    # factor = mean_img - np.mean([mean_img1,mean_img2])
-    # c_img = img - factor
     factor_b = img[~maskBreast].mean() # Brightness factor. In this case, equal to the offset in the bg.
     c_img = img - factor_b
     factor_c = c_img[maskBreast].mean()/np.mean([mean_img1,mean_img2]) # Contrast factor
@@ -256,9 +246,6 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
                 dcmH3.Rows, dcmH3.Columns = cropped_dim
    
             # Write dicom files
-            # pydicom.dcmwrite(os.path.join(folder_name,"_{:0>2}.dcm".format(str(i+j))),
-            #                  dcmH1, 
-            #                  write_like_original=True) 
             dcmH1.save_as(os.path.join(folder_name,"_{:0>2}.dcm".format(str(2*i))))
             # print("Saving {:0>2} as the first real image in sequence".format(str(2*i)))
               
@@ -274,7 +261,6 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
             # print("Saving {:0>2} as the second interpolated image".format(str(2*i+3)))
             
             dcmH3.save_as(os.path.join(folder_name,"_{:0>2}.dcm".format(str(2*i+4))))
-        
     return
 
 #%%
