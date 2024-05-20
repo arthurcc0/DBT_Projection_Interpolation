@@ -141,7 +141,6 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
         
     test_exams_path = os.listdir(os.path.join(path_data,subset))
     
-    applyFlatFielding = False
     applyMeanFactor = False
     step = 0
     if applyFlatFielding:
@@ -313,7 +312,7 @@ if __name__ == '__main__':
     # prop = np.load('tools/{}_dataset_prop_{}.npy'.format(partition,applyFlatFielding*'wFlatFieldingCorrection'),allow_pickle=True).item()
     # maxV = prop['max']
 
-    path_data = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Inrad_Processed//'
+    path_data = './images' # Path to the input image data
     # subset defines the folder to read the exams from. Projections will be generated for those DBTs
     subset = 'test'
     path_models = "final_models/mod_{}/{}_{}{}/".format(partition,dts,typ,useTuningP*"_wAngle")
@@ -330,7 +329,7 @@ if __name__ == '__main__':
                                                                                                                                 useTuningP*'_wAngle')
     
     # To use specific address of model trained in previous versions
-    # path_final_generator = 'final_models/mod_HologicClinical/Charb+PL/model_RRIN_DBT_VCT_raw_L=8191_Factor1_(1792, 608)Slice_charbinit_perceptual_vgg_Epoch_3'
+    # path_final_generator = 'final_models/...' # Input the specific path of the trained model
     
     # Test if there is a GPU
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -346,7 +345,6 @@ if __name__ == '__main__':
     
     # Load gen pre-trained model parameters (if exist)
     generator, epoch = load_model(generator,path_final_model=path_final_generator,oldModel = False)
-    # epoch = 4
     
     print("Running test on {}.".format(device))
     
