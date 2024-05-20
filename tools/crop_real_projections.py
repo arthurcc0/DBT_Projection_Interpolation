@@ -2,7 +2,7 @@
 """
 Created on Tue Aug  9 11:35:17 2022
 
-@author: Arthur
+@author: ArthurC
 
 rescale and save original projections as .dcm
 """
@@ -13,7 +13,7 @@ import pydicom
 dim = (2048,1152)
 num_projs = 15
 
-path_data = '/media/laviusp/c2370571-c46d-4175-acba-c89fc1b3e499/lavi/Documents/Arthur/Inrad_Processed/'
+path_data = './' # Path to the exam folders with the projections to be cropped
 subset = 'test'
 
 out_path = os.path.join(path_data,subset+'_cropped')
