@@ -267,7 +267,7 @@ def test(model, path_data, path2write, partition, subset, machine, crop_flag, cr
 
 if __name__ == '__main__':
     
-    # ap = argparse.ArgumentParser(description='Generate interpolated DBT projections')
+    # ap = argparse.ArgumentParser(description='Generate interpolated DBT projections to fill the gaps between the original ones')
     # ap.add_argument("--mod", type=str, required=True, 
     #                 help="Image set from: (train_VCT, 'train_ClinicalHologic')")
     # ap.add_argument("--dts", type=int, required=True, 
