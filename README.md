@@ -1,6 +1,6 @@
 # DBT Projection Interpolation
 
-Codes used to train a Residual Refinement Interpolation Network (RRIN) using digital breast tomosynthesis (DBT) projections, and further synthesize projections based on the neighbour ones. The model was used in the published [paper](https://doi.org/10.1117/12.2625748):paper:
+Codes used to train a Residual Refinement Interpolation Network (RRIN) using digital breast tomosynthesis (DBT) projections, and further synthesize projections based on the neighbour ones. The model was used in the published [paper](https://doi.org/10.1117/12.2625748):
 
 > Arthur C. Costa, Rodrigo B. Vimieiro, Lucas R. Borges, Bruno Barufaldi, Andrew D. A. Maidment, Marcelo A. C. Vieira, "Assessment of video frame interpolation network to generate digital breast tomosynthesis projections," Proc. SPIE 12286, 16th International Workshop on Breast Imaging (IWBI2022), 122861D (13 July 2022).
 
