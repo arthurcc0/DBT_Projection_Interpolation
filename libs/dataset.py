@@ -16,9 +16,6 @@ def de_scale(data, vmax):
 
 def scale(data, vmin, vmax):
     
-    # data -= vmin
-    # data /= red_factor
-    # data += vmin
     data /= vmax
     
     data[data > 1.0] = 1.0
