@@ -224,4 +224,4 @@ if __name__ == '__main__':
       
       # if (epoch + 1) % 5 == 0:
           # Testing code
-          # os.system("python main_testing.py --mod {} --dts {} --loss PL4 --norm {} --crop True".format(partition, dts, normalization))                  
+          # os.system("python testing.py --mod {} --dts {} --loss PL4 --norm {} --crop True".format(partition, dts, normalization))                  
