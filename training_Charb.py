@@ -1,7 +1,7 @@
 """
 Created on Fri Sep 17 10:10:37 2021
 
-@author: Arthur
+@author: ArthurC
 """
 
 import matplotlib.pyplot as plt
@@ -210,4 +210,4 @@ if __name__ == '__main__':
       
       # if (epoch + 1) % 10 == 0:
       #     # Testing code
-      #     os.system("python main_testing.py --mod {} --dts {} --loss {} --norm {} --crop True".format(partition, dts, 'Charb', normalization))
+      #     os.system("python testing.py --mod {} --dts {} --loss {} --norm {} --crop True".format(partition, dts, 'Charb', normalization))
